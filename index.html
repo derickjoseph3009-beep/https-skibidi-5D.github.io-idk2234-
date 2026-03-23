@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Browser</title>
+  <style>
+    body { margin:0; font-family: Arial; }
+    #topbar {
+      display:flex;
+      padding:10px;
+      background:#111;
+    }
+    input, select, button {
+      margin-right:5px;
+      padding:8px;
+    }
+
+    #tabs {
+      display:flex;
+      background:#222;
+      color:white;
+      padding:5px;
+    }
+
+    .tab {
+      padding:8px;
+      margin-right:5px;
+      background:#444;
+      cursor:pointer;
+    }
+
+    iframe {
+      width:100%;
+      height:85vh;
+      border:none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="topbar">
+  <input id="search" placeholder="Search or enter URL">
+  
+  <select id="engine">
+    <option value="google">Google</option>
+    <option value="duck">DuckDuckGo</option>
+  </select>
+  
+  <button onclick="go()">Go</button>
+  <button onclick="newTab()">+ Tab</button>
+</div>
+
+<div id="tabs"></div>
+
+<div id="frames"></div>
+
+<script>
+let tabCount = 0;
+let currentTab = null;
+
+function newTab() {
+  tabCount++;
+  let id = "tab" + tabCount;
+
+  // Create tab button
+  let tab = document.createElement("div");
+  tab.className = "tab";
+  tab.innerText = "Tab " + tabCount;
+  tab.onclick = () => switchTab(id);
+  document.getElementById("tabs").appendChild(tab);
+
+  // Create iframe
+  let frame = document.createElement("iframe");
+  frame.id = id;
+  frame.style.display = "none";
+  document.getElementById("frames").appendChild(frame);
+
+  switchTab(id);
+}
+
+function switchTab(id) {
+  let frames = document.querySelectorAll("iframe");
+  frames.forEach(f => f.style.display = "none");
+
+  document.getElementById(id).style.display = "block";
+  currentTab = id;
+}
+
+function go() {
+  let input = document.getElementById("search").value;
+  let engine = document.getElementById("engine").value;
+  let url;
+
+  if (input.startsWith("http")) {
+    url = input;
+  } else {
+    if (engine === "google") {
+      url = "https://www.google.com/search?q=" + input;
+    } else {
+      url = "https://duckduckgo.com/?q=" + input;
+    }
+  }
+
+  if (currentTab) {
+    document.getElementById(currentTab).src = url;
+  }
+}
+
+// Start with one tab
+newTab();
+</script>
+
+</body>
+</html>
